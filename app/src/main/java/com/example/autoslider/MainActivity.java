@@ -9,10 +9,14 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class MainActivity extends AppCompatActivity {
 
     ViewPager viewPager;
     LinearLayout sliderDotspanel;
+    Timer timer;
     private int dotscount;
     private ImageView[] dots;
 
@@ -28,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(this);
 
         viewPager.setAdapter(viewPagerAdapter);
+
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new RemindTask(),0,2000);
 
         dotscount = viewPagerAdapter.getCount();
         dots = new ImageView[dotscount];
@@ -72,5 +79,17 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getSupportActionBar().hide();
 
+    }
+    class RemindTask extends TimerTask{
+        @Override
+        public void run(){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (dotscount>2){dotscount= 0;}
+
+                    else {viewPager.setCurrentItem(dotscount++);}}
+            });
+        }
     }
 }
